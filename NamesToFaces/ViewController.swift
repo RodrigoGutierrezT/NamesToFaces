@@ -74,18 +74,39 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let person = people[indexPath.item]
+        let ac = UIAlertController(title: "Select Action", message: nil, preferredStyle: .alert)
         
-        let ac = UIAlertController(title: "Rename", message: nil, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Rename", style: .default, handler: { [weak self] _ in
+            let renameAc = UIAlertController(title: "Rename", message: nil, preferredStyle: .alert)
+            renameAc.addTextField()
+            
+            renameAc.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self, weak renameAc] _ in
+                    guard let name = renameAc?.textFields?[0].text else { return }
+                    person.name = name
+                    self?.collectionView.reloadData()
+                }))
+            
+            renameAc.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            self?.present(renameAc, animated: true)
+        }))
         
-        ac.addTextField()
-        
-        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self, weak ac] _ in
-            guard let name = ac?.textFields?[0].text else { return }
-            person.name = name
+        ac.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { [weak self] _ in
+            self?.people.remove(at: indexPath.item)
             self?.collectionView.reloadData()
         }))
         
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        
+//        ac.addTextField()
+//        
+//        ac.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self, weak ac] _ in
+//            guard let name = ac?.textFields?[0].text else { return }
+//            person.name = name
+//            self?.collectionView.reloadData()
+//        }))
+//        
+        
         present(ac, animated: true)
     }
 }
